@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تلگرام Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -46,33 +47,32 @@
     <div id="logs"></div>
 
     <script>
-    function logEvent(message) {
-        const logContainer = document.getElementById('logs');
-        const newLog = document.createElement('div');
-        newLog.className = 'log-item';
-        newLog.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
-        logContainer.appendChild(newLog);
-    }
-
-    // بررسی اتصال به Web App تلگرام
-    try {
-        window.Telegram.WebApp.ready();
-
-        // اطلاعات کاربر را از تلگرام دریافت کن
-        const user = Telegram.WebApp.initDataUnsafe.user;
-
-        if (user) {
-            document.getElementById('username').textContent = user.username || "ناشناخته";
-            document.getElementById('fullname').textContent = `${user.first_name} ${user.last_name || ""}`;
-            document.getElementById('user-id').textContent = user.id;
-            logEvent('اطلاعات کاربر با موفقیت بارگذاری شد.');
-        } else {
-            logEvent('اطلاعات کاربر یافت نشد.');
+        function logEvent(message) {
+            const logContainer = document.getElementById('logs');
+            const newLog = document.createElement('div');
+            newLog.className = 'log-item';
+            newLog.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+            logContainer.appendChild(newLog);
         }
-    } catch (error) {
-        logEvent(`خطا در دریافت اطلاعات: ${error.message}`);
-    }
-</script>
 
+        try {
+            // بررسی آماده بودن Web App تلگرام
+            window.Telegram.WebApp.ready();
+
+            // اطلاعات کاربر را از initDataUnsafe دریافت کن
+            const user = Telegram.WebApp.initDataUnsafe?.user;
+
+            if (user) {
+                document.getElementById('username').textContent = user.username || "ناشناخته";
+                document.getElementById('fullname').textContent = `${user.first_name} ${user.last_name || ""}`;
+                document.getElementById('user-id').textContent = user.id;
+                logEvent('اطلاعات کاربر با موفقیت بارگذاری شد.');
+            } else {
+                logEvent('هیچ اطلاعات کاربری دریافت نشد.');
+            }
+        } catch (error) {
+            logEvent(`خطا در دریافت اطلاعات: ${error.message}`);
+        }
+    </script>
 </body>
 </html>
