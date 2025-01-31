@@ -4,21 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telegram WebApp Test</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-    </style>
 </head>
 <body>
-    <h1>Telegram WebApp Test Page</h1>
+    <h1>Telegram WebApp Test</h1>
     <p id="status">Checking Telegram WebApp...</p>
     <h3>Logs:</h3>
     <pre id="logs">Loading...</pre>
@@ -30,7 +18,7 @@
             document.getElementById("logs").textContent = logs.join("\n");
         };
 
-        // گرفتن پارامترهای URL
+        // بررسی URL
         const urlParams = new URLSearchParams(window.location.search);
         logToPage(`URL Params: ${JSON.stringify(Object.fromEntries(urlParams.entries()))}`);
 
@@ -40,9 +28,6 @@
             logToPage("Telegram WebApp is available.");
             logToPage(`initData: ${tg.initData}`);
             logToPage(`initDataUnsafe: ${JSON.stringify(tg.initDataUnsafe, null, 2)}`);
-
-            // تغییر وضعیت به "موجود است"
-            document.getElementById("status").textContent = "Telegram WebApp is available.";
         } else {
             logToPage("Telegram WebApp is not available.");
             document.getElementById("status").textContent = "Telegram WebApp is not available.";
