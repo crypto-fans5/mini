@@ -46,34 +46,33 @@
     <div id="logs"></div>
 
     <script>
-        function logEvent(message) {
-            const logContainer = document.getElementById('logs');
-            const newLog = document.createElement('div');
-            newLog.className = 'log-item';
-            newLog.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
-            logContainer.appendChild(newLog);
-        }
+    function logEvent(message) {
+        const logContainer = document.getElementById('logs');
+        const newLog = document.createElement('div');
+        newLog.className = 'log-item';
+        newLog.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+        logContainer.appendChild(newLog);
+    }
 
-        // بررسی اتصال به Web App تلگرام
+    // بررسی اتصال به Web App تلگرام
+    try {
         window.Telegram.WebApp.ready();
 
         // اطلاعات کاربر را از تلگرام دریافت کن
         const user = Telegram.WebApp.initDataUnsafe.user;
-        document.getElementById('username').textContent = user.username || "ناشناخته";
-        document.getElementById('fullname').textContent = `${user.first_name} ${user.last_name || ""}`;
-        document.getElementById('user-id').textContent = user.id;
 
-        logEvent('اطلاعات کاربر بارگذاری شد.');
+        if (user) {
+            document.getElementById('username').textContent = user.username || "ناشناخته";
+            document.getElementById('fullname').textContent = `${user.first_name} ${user.last_name || ""}`;
+            document.getElementById('user-id').textContent = user.id;
+            logEvent('اطلاعات کاربر با موفقیت بارگذاری شد.');
+        } else {
+            logEvent('اطلاعات کاربر یافت نشد.');
+        }
+    } catch (error) {
+        logEvent(`خطا در دریافت اطلاعات: ${error.message}`);
+    }
+</script>
 
-        // اگر یک پیام دریافت شد
-        Telegram.WebApp.onEvent('messageReceived', function (message) {
-            logEvent(`پیام جدید دریافت شد: ${message}`);
-        });
-
-        // وقتی دکمه "بازگشت به چت" کلیک شد
-        Telegram.WebApp.onEvent('mainButtonClicked', function () {
-            logEvent('دکمه اصلی کلیک شد.');
-        });
-    </script>
 </body>
 </html>
