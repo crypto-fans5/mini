@@ -1,46 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram WebApp Test</title>
+    <title>تلگرام Mini App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        #user-info {
+            padding: 10px;
+            background-color: #e0e7ff;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        #logs {
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .log-item {
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #444;
+        }
+    </style>
 </head>
 <body>
-    <h1>Telegram WebApp Test</h1>
-    <p id="status">Checking Telegram WebApp...</p>
-    <h3>Logs:</h3>
-    <pre id="logs">Loading...</pre>
+    <h2>اطلاعات کاربر و لاگ‌ها</h2>
+    <div id="user-info">
+        <strong>نام کاربری:</strong> <span id="username">--</span><br>
+        <strong>نام کامل:</strong> <span id="fullname">--</span><br>
+        <strong>شناسه کاربری:</strong> <span id="user-id">--</span><br>
+    </div>
+
+    <h3>لاگ‌ها:</h3>
+    <div id="logs"></div>
 
     <script>
-        const logs = [];
-        const logToPage = (message) => {
-            logs.push(message);
-            document.getElementById("logs").textContent = logs.join("\n");
-        };
-
-        // بررسی URL
-        const urlParams = new URLSearchParams(window.location.search);
-        logToPage(`URL Params: ${JSON.stringify(Object.fromEntries(urlParams.entries()))}`);
-
-        // بررسی Telegram.WebApp
-        if (typeof window !== "undefined" && window.Telegram?.WebApp) {
-            const tg = window.Telegram.WebApp;
-
-            logToPage("Telegram WebApp is available.");
-            logToPage(`initData: ${tg.initData}`);
-            logToPage(`initDataUnsafe: ${JSON.stringify(tg.initDataUnsafe, null, 2)}`);
-
-            // نمایش دکمه اصلی تلگرام
-            tg.MainButton.show();
-            tg.MainButton.setText("Submit");
-            tg.MainButton.onClick(() => {
-                logToPage("MainButton clicked!");
-                tg.sendData("Data sent from Mini App");
-            });
-        } else {
-            logToPage("Telegram WebApp is not available.");
-            document.getElementById("status").textContent = "Telegram WebApp is not available.";
+        function logEvent(message) {
+            const logContainer = document.getElementById('logs');
+            const newLog = document.createElement('div');
+            newLog.className = 'log-item';
+            newLog.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+            logContainer.appendChild(newLog);
         }
+
+        // بررسی اتصال به Web App تلگرام
+        window.Telegram.WebApp.ready();
+
+        // اطلاعات کاربر را از تلگرام دریافت کن
+        const user = Telegram.WebApp.initDataUnsafe.user;
+        document.getElementById('username').textContent = user.username || "ناشناخته";
+        document.getElementById('fullname').textContent = `${user.first_name} ${user.last_name || ""}`;
+        document.getElementById('user-id').textContent = user.id;
+
+        logEvent('اطلاعات کاربر بارگذاری شد.');
+
+        // اگر یک پیام دریافت شد
+        Telegram.WebApp.onEvent('messageReceived', function (message) {
+            logEvent(`پیام جدید دریافت شد: ${message}`);
+        });
+
+        // وقتی دکمه "بازگشت به چت" کلیک شد
+        Telegram.WebApp.onEvent('mainButtonClicked', function () {
+            logEvent('دکمه اصلی کلیک شد.');
+        });
     </script>
 </body>
 </html>
