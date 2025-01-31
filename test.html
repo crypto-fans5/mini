@@ -22,12 +22,21 @@
         const urlParams = new URLSearchParams(window.location.search);
         logToPage(`URL Params: ${JSON.stringify(Object.fromEntries(urlParams.entries()))}`);
 
+        // بررسی Telegram.WebApp
         if (typeof window !== "undefined" && window.Telegram?.WebApp) {
             const tg = window.Telegram.WebApp;
 
             logToPage("Telegram WebApp is available.");
             logToPage(`initData: ${tg.initData}`);
             logToPage(`initDataUnsafe: ${JSON.stringify(tg.initDataUnsafe, null, 2)}`);
+
+            // نمایش دکمه اصلی تلگرام
+            tg.MainButton.show();
+            tg.MainButton.setText("Submit");
+            tg.MainButton.onClick(() => {
+                logToPage("MainButton clicked!");
+                tg.sendData("Data sent from Mini App");
+            });
         } else {
             logToPage("Telegram WebApp is not available.");
             document.getElementById("status").textContent = "Telegram WebApp is not available.";
